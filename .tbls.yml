@@ -1,0 +1,24 @@
+dsn: ${TBLS_DSN}
+docPath: docs/dictionary
+
+er:
+  format: mermaid
+  distance: 1
+
+# Relación virtual entre esquemas (no existe como FK en la BD)
+relations:
+  - table: publicado.socio_publicado
+    columns:
+      - id_externo
+    parentTable: core.socios
+    parentColumns:
+      - id_externo
+    cardinality: zero or one
+    parentCardinality: exactly one
+    def: "publicado.socio_publicado.id_externo::text = core.socios.id_externo"
+
+# Descripciones extra que no están como COMMENT en la BD
+comments:
+  - table: core.libros
+    columnComments:
+      autor: "Nombre del autor tal como aparece en la portada"

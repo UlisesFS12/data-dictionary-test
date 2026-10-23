@@ -1,0 +1,454 @@
+{
+  "name": "demo_dd",
+  "tables": [
+    {
+      "name": "core.socios",
+      "type": "BASE TABLE",
+      "comment": "Personas inscritas en la biblioteca",
+      "columns": [
+        {
+          "name": "socio_id",
+          "type": "integer",
+          "nullable": false,
+          "default": "nextval('core.socios_socio_id_seq'::regclass)"
+        },
+        {
+          "name": "nombre",
+          "type": "varchar(100)",
+          "nullable": false
+        },
+        {
+          "name": "email",
+          "type": "varchar(150)",
+          "nullable": true
+        },
+        {
+          "name": "id_externo",
+          "type": "varchar(20)",
+          "nullable": true,
+          "comment": "Identificador usado por el sistema externo"
+        },
+        {
+          "name": "creado_en",
+          "type": "timestamp without time zone",
+          "nullable": true,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "socios_pkey",
+          "def": "CREATE UNIQUE INDEX socios_pkey ON core.socios USING btree (socio_id)",
+          "table": "core.socios",
+          "columns": [
+            "socio_id"
+          ]
+        },
+        {
+          "name": "socios_email_key",
+          "def": "CREATE UNIQUE INDEX socios_email_key ON core.socios USING btree (email)",
+          "table": "core.socios",
+          "columns": [
+            "email"
+          ]
+        },
+        {
+          "name": "socios_id_externo_key",
+          "def": "CREATE UNIQUE INDEX socios_id_externo_key ON core.socios USING btree (id_externo)",
+          "table": "core.socios",
+          "columns": [
+            "id_externo"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "socios_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (socio_id)",
+          "table": "core.socios",
+          "referenced_table": "",
+          "columns": [
+            "socio_id"
+          ]
+        },
+        {
+          "name": "socios_email_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (email)",
+          "table": "core.socios",
+          "referenced_table": "",
+          "columns": [
+            "email"
+          ]
+        },
+        {
+          "name": "socios_id_externo_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (id_externo)",
+          "table": "core.socios",
+          "referenced_table": "",
+          "columns": [
+            "id_externo"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "core.libros",
+      "type": "BASE TABLE",
+      "comment": "Catálogo de libros",
+      "columns": [
+        {
+          "name": "libro_id",
+          "type": "integer",
+          "nullable": false,
+          "default": "nextval('core.libros_libro_id_seq'::regclass)"
+        },
+        {
+          "name": "titulo",
+          "type": "varchar(200)",
+          "nullable": false
+        },
+        {
+          "name": "autor",
+          "type": "varchar(120)",
+          "nullable": true,
+          "comment": "Nombre del autor tal como aparece en la portada"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "libros_pkey",
+          "def": "CREATE UNIQUE INDEX libros_pkey ON core.libros USING btree (libro_id)",
+          "table": "core.libros",
+          "columns": [
+            "libro_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "libros_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (libro_id)",
+          "table": "core.libros",
+          "referenced_table": "",
+          "columns": [
+            "libro_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "core.prestamos",
+      "type": "BASE TABLE",
+      "comment": "Préstamo de un libro a un socio",
+      "columns": [
+        {
+          "name": "prestamo_id",
+          "type": "integer",
+          "nullable": false,
+          "default": "nextval('core.prestamos_prestamo_id_seq'::regclass)"
+        },
+        {
+          "name": "socio_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "libro_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "fecha_prestamo",
+          "type": "date",
+          "nullable": false,
+          "default": "CURRENT_DATE"
+        },
+        {
+          "name": "fecha_devolucion",
+          "type": "date",
+          "nullable": true
+        },
+        {
+          "name": "estado",
+          "type": "varchar(20)",
+          "nullable": false,
+          "default": "'ABIERTO'::character varying",
+          "comment": "ABIERTO, DEVUELTO o VENCIDO"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "prestamos_pkey",
+          "def": "CREATE UNIQUE INDEX prestamos_pkey ON core.prestamos USING btree (prestamo_id)",
+          "table": "core.prestamos",
+          "columns": [
+            "prestamo_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "prestamos_socio_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (socio_id) REFERENCES core.socios(socio_id)",
+          "table": "core.prestamos",
+          "referenced_table": "core.socios",
+          "columns": [
+            "socio_id"
+          ],
+          "referenced_columns": [
+            "socio_id"
+          ]
+        },
+        {
+          "name": "prestamos_libro_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (libro_id) REFERENCES core.libros(libro_id)",
+          "table": "core.prestamos",
+          "referenced_table": "core.libros",
+          "columns": [
+            "libro_id"
+          ],
+          "referenced_columns": [
+            "libro_id"
+          ]
+        },
+        {
+          "name": "prestamos_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (prestamo_id)",
+          "table": "core.prestamos",
+          "referenced_table": "",
+          "columns": [
+            "prestamo_id"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_marcar_devuelto",
+          "def": "CREATE TRIGGER trg_marcar_devuelto BEFORE UPDATE ON core.prestamos FOR EACH ROW EXECUTE FUNCTION core.fn_marcar_devuelto()"
+        }
+      ]
+    },
+    {
+      "name": "core.multas",
+      "type": "BASE TABLE",
+      "comment": "Multas por devolución tardía",
+      "columns": [
+        {
+          "name": "multa_id",
+          "type": "integer",
+          "nullable": false,
+          "default": "nextval('core.multas_multa_id_seq'::regclass)"
+        },
+        {
+          "name": "prestamo_id",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "monto",
+          "type": "numeric(10,2)",
+          "nullable": false
+        },
+        {
+          "name": "pagada",
+          "type": "boolean",
+          "nullable": true,
+          "default": "false"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "multas_pkey",
+          "def": "CREATE UNIQUE INDEX multas_pkey ON core.multas USING btree (multa_id)",
+          "table": "core.multas",
+          "columns": [
+            "multa_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "multas_prestamo_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (prestamo_id) REFERENCES core.prestamos(prestamo_id)",
+          "table": "core.multas",
+          "referenced_table": "core.prestamos",
+          "columns": [
+            "prestamo_id"
+          ],
+          "referenced_columns": [
+            "prestamo_id"
+          ]
+        },
+        {
+          "name": "multas_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (multa_id)",
+          "table": "core.multas",
+          "referenced_table": "",
+          "columns": [
+            "multa_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "publicado.socio_publicado",
+      "type": "BASE TABLE",
+      "comment": "Socios enviados al sistema externo",
+      "columns": [
+        {
+          "name": "id",
+          "type": "integer",
+          "nullable": false,
+          "default": "nextval('publicado.socio_publicado_id_seq'::regclass)"
+        },
+        {
+          "name": "id_externo",
+          "type": "integer",
+          "nullable": false,
+          "comment": "Equivale a core.socios.id_externo (con cast a texto)"
+        },
+        {
+          "name": "publicado_en",
+          "type": "timestamp without time zone",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "socio_publicado_pkey",
+          "def": "CREATE UNIQUE INDEX socio_publicado_pkey ON publicado.socio_publicado USING btree (id)",
+          "table": "publicado.socio_publicado",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "socio_publicado_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "publicado.socio_publicado",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "core.vw_multas_pendientes",
+      "type": "VIEW",
+      "comment": "Total de multas sin pagar por socio",
+      "columns": [
+        {
+          "name": "socio_id",
+          "type": "integer",
+          "nullable": true
+        },
+        {
+          "name": "nombre",
+          "type": "varchar(100)",
+          "nullable": true
+        },
+        {
+          "name": "total_pendiente",
+          "type": "numeric",
+          "nullable": true
+        }
+      ],
+      "def": "CREATE VIEW vw_multas_pendientes AS (\n SELECT s.socio_id,\n    s.nombre,\n    sum(m.monto) AS total_pendiente\n   FROM ((core.multas m\n     JOIN core.prestamos p ON ((p.prestamo_id = m.prestamo_id)))\n     JOIN core.socios s ON ((s.socio_id = p.socio_id)))\n  WHERE (NOT m.pagada)\n  GROUP BY s.socio_id, s.nombre\n)",
+      "referenced_tables": [
+        "core.multas",
+        "core.prestamos",
+        "core.socios"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "table": "core.prestamos",
+      "columns": [
+        "socio_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "core.socios",
+      "parent_columns": [
+        "socio_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (socio_id) REFERENCES core.socios(socio_id)"
+    },
+    {
+      "table": "core.prestamos",
+      "columns": [
+        "libro_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "core.libros",
+      "parent_columns": [
+        "libro_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (libro_id) REFERENCES core.libros(libro_id)"
+    },
+    {
+      "table": "core.multas",
+      "columns": [
+        "prestamo_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "core.prestamos",
+      "parent_columns": [
+        "prestamo_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (prestamo_id) REFERENCES core.prestamos(prestamo_id)"
+    },
+    {
+      "table": "publicado.socio_publicado",
+      "columns": [
+        "id_externo"
+      ],
+      "cardinality": "zero_or_one",
+      "parent_table": "core.socios",
+      "parent_columns": [
+        "id_externo"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "publicado.socio_publicado.id_externo::text = core.socios.id_externo",
+      "virtual": true
+    }
+  ],
+  "functions": [
+    {
+      "name": "core.fn_marcar_devuelto",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    }
+  ],
+  "driver": {
+    "name": "postgres",
+    "database_version": "PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "meta": {
+      "current_schema": "public",
+      "search_paths": [
+        "postgres",
+        "public"
+      ],
+      "dict": {
+        "Functions": "Stored procedures and functions"
+      }
+    }
+  }
+}
